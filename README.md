@@ -1,30 +1,34 @@
 # Binding Engine Projection
 
-A provenance-aware projection layer for the Consolidated Witchcraft BindingEngine ecosystem.
+A provenance-aware semantic projection layer for the Consolidated Witchcraft BindingEngine ecosystem.
 
-Binding Engine Projection transforms semantic assertions into structured semantic projections suitable for graph construction, indexing, traversal and downstream reasoning systems.
+Binding Engine Projection transforms semantic assertions into deterministic semantic projections suitable for graph construction, indexing, traversal and downstream semantic processing systems.
 
 ## Purpose
 
 The Binding Engine parser answers:
+
 > “What syntactically exists in this document?”
 
 The vocabulary layer answers:
+
 > “Is this binding semantically valid under this vocabulary?”
 
 Binding Assertions answers:
+
 > “What claims does this document make?”
 
 Binding Projection answers:
+
 > “What semantic structures do those claims describe?”
 
-This package acts as the bridge between semantic assertions and graph-oriented semantic structures.
+This package acts as the bridge between provenance-aware semantic assertions and graph-oriented semantic structures.
 
 ## Status
 
 Early development.
 
-The API should be considered unstable until 1.0.0.
+The API should be considered unstable until `1.0.0`.
 
 ## Installation
 
@@ -49,6 +53,7 @@ The projection layer may produce:
 
 ```text
 EntityProjection
+├── projectionKey: entity:person:jane-austen
 ├── entityType: person
 ├── identifier: jane-austen
 ├── label: Jane Austen
@@ -72,6 +77,8 @@ May produce:
 
 ```text
 RelationshipProjection
+├── projectionKey:
+│   relationship:parent_of:george-austen:jane-austen
 ├── relationshipType: parent_of
 ├── subject: george-austen
 ├── object: jane-austen
@@ -86,6 +93,7 @@ Projections are returned as immutable `ProjectionSet` collections.
 ### Provenance First
 
 Every projection preserves:
+
 - originating assertion identity
 - source document identity
 - revision identity
@@ -93,6 +101,7 @@ Every projection preserves:
 - source spans
 
 Downstream systems should always be able to answer:
+
 > “Which authored claim produced this structure?”
 
 ### Deterministic Projection
@@ -102,6 +111,7 @@ Projection is intentionally deterministic.
 Given the same validated assertions and vocabulary context, the same projections should always be produced.
 
 Projection does not:
+
 - infer new knowledge
 - resolve conflicts
 - choose canon
@@ -110,11 +120,36 @@ Projection does not:
 
 Those concerns belong to downstream systems.
 
+### Stable Projection Identity
+
+Each projection exposes a deterministic `ProjectionKey`.
+
+Projection keys identify semantic structures independently of provenance.
+
+Examples:
+
+```text
+entity:person:jane-austen
+
+relationship:parent_of:george-austen:jane-austen
+```
+
+Projection keys are intended to support:
+
+- indexing
+- caching
+- graph construction
+- deduplication
+- downstream storage systems
+
+Projection keys are deterministic but are not globally authoritative truth identifiers.
+
 ### Vocabulary-Aware
 
 Projection occurs against assertions already validated against a specific vocabulary version.
 
 This allows projection logic to safely reason about:
+
 - binding semantics
 - attribute meanings
 - payload structures
@@ -126,6 +161,7 @@ This allows projection logic to safely reason about:
 This package produces semantic projections suitable for graph-oriented systems without imposing a specific storage model.
 
 Projection output may be consumed by:
+
 - in-memory graphs
 - relational systems
 - graph databases
@@ -149,6 +185,8 @@ Projects to:
 
 ```text
 EntityProjection
+├── projectionKey:
+│   entity:person:jane-austen
 ├── entityType: person
 ├── identifier: jane-austen
 └── label: Jane Austen
@@ -157,6 +195,7 @@ EntityProjection
 ### Relationship Projection
 
 Assertions with:
+
 - binding type `relationship`
 - attribute-list payloads
 - `type`, `subject` and `object` attributes
@@ -177,20 +216,26 @@ Projects to:
 
 ```text
 RelationshipProjection
+├── projectionKey:
+│   relationship:parent_of:george-austen:jane-austen
 ├── relationshipType: parent_of
 ├── subject: george-austen
 ├── object: jane-austen
-└── label: George Austen was Jane Austen’s father
+└── label:
+    George Austen was Jane Austen’s father
 ```
 
 ### Projection Constraints
 
 Projection currently:
+
 - preserves originating assertion provenance
 - preserves extractor ordering
+- preserves deterministic projection identity
 - ignores assertions that are not projection-ready
 
 Projection does not:
+
 - infer missing structures
 - canonicalise entities
 - merge duplicate projections
@@ -198,6 +243,41 @@ Projection does not:
 - construct complete graph topologies
 
 Those concerns belong to downstream systems.
+
+## Projection Serialization
+
+Projection structures may be serialized to deterministic array representations.
+
+Serialized projections preserve:
+
+- projection identity
+- semantic structure
+- originating assertion data
+- provenance context
+
+Example conceptual output:
+
+```php
+[
+    'projectionType' => 'entity',
+    'projectionKey' => 'entity:person:jane-austen',
+    'entityType' => 'person',
+    'identifier' => 'jane-austen',
+    'label' => 'Jane Austen',
+    'originatingAssertion' => [
+        // assertion data
+    ],
+]
+```
+
+Serialization currently targets array representations suitable for:
+
+- JSON APIs
+- queues
+- snapshots
+- persistence layers
+- search indexes
+- integration testing
 
 ## Example Workflow
 
@@ -218,10 +298,12 @@ Projection Extractor
 ↓
 Projection Set
 ↓
+Projection Serialization
+↓
 Inference / Graph Construction / Indexing
 ```
 
-## Planned Components
+## Core Components
 
 ### Projection Extractor
 
@@ -229,15 +311,20 @@ Transforms assertion sets into projection sets.
 
 ### Composite Projection Extractor
 
-Coordinates multiple specialised projection extractors into a single deterministic projection pipeline.
+Coordinates multiple specialised projection extractors into a deterministic projection pipeline.
 
 ### Projection Set
 
 Immutable collection of semantic projections.
 
+### Projection Serialization
+
+Deterministic serialization of projections and projection sets into transport-safe array structures.
+
 ### Projection Types
 
 Structured semantic projections such as:
+
 - entity projections
 - relationship projections
 - event projections
@@ -247,6 +334,7 @@ Structured semantic projections such as:
 ### Projection Provenance
 
 Projection structures retain:
+
 - originating assertion references
 - source context
 - source spans
@@ -259,6 +347,7 @@ Binding Engine Projection treats semantic structures as derived representations 
 This distinction is important.
 
 Multiple assertions may produce:
+
 - conflicting projections
 - overlapping structures
 - competing semantic interpretations
@@ -272,16 +361,27 @@ The role of this package is to faithfully project semantic structures — not to
 
 declare(strict_types=1);
 
-use ConsolidatedWitchcraft\BindingEngine\Assertions\AstAssertionExtractor;use ConsolidatedWitchcraft\BindingEngine\Assertions\SourceContext;use ConsolidatedWitchcraft\BindingEngine\Parser\Parser;use ConsolidatedWitchcraft\BindingEngine\Projection\Extraction\CompositeProjectionExtractor;use ConsolidatedWitchcraft\BindingEngine\Projection\Extraction\EntityProjectionExtractor;use ConsolidatedWitchcraft\BindingEngine\Projection\Extraction\RelationshipProjectionExtractor;use ConsolidatedWitchcraft\BindingEngine\Vocabulary\Validator;use ConsolidatedWitchcraft\BindingEngine\VocabularyLoader\JsonVocabularyLoader;
+use ConsolidatedWitchcraft\BindingEngine\Assertions\AstAssertionExtractor;
+use ConsolidatedWitchcraft\BindingEngine\Assertions\SourceContext;
+use ConsolidatedWitchcraft\BindingEngine\Parser\Parser;
+use ConsolidatedWitchcraft\BindingEngine\Projection\Extraction\CompositeProjectionExtractor;
+use ConsolidatedWitchcraft\BindingEngine\Projection\Extraction\EntityProjectionExtractor;
+use ConsolidatedWitchcraft\BindingEngine\Projection\Extraction\RelationshipProjectionExtractor;
+use ConsolidatedWitchcraft\BindingEngine\Projection\Serialization\ProjectionSetArraySerializer;
+use ConsolidatedWitchcraft\BindingEngine\Vocabulary\Validator;
+use ConsolidatedWitchcraft\BindingEngine\VocabularyLoader\JsonVocabularyLoader;
 
 $parser = new Parser();
 $vocabularyLoader = new JsonVocabularyLoader();
+
 $assertionExtractor = new AstAssertionExtractor();
 
 $projectionExtractor = new CompositeProjectionExtractor([
     new EntityProjectionExtractor(),
     new RelationshipProjectionExtractor(),
 ]);
+
+$projectionSerializer = new ProjectionSetArraySerializer();
 
 $source = <<<MARKDOWN
 @person[jane-austen](Jane Austen)
@@ -300,7 +400,9 @@ $vocabulary = $vocabularyLoader->load(
 $parseResult = $parser->parse($source);
 
 if ($parseResult->hasErrors()) {
-    throw new RuntimeException('Document contains parser errors.');
+    throw new RuntimeException(
+        'Document contains parser errors.',
+    );
 }
 
 $validator = new Validator($vocabulary);
@@ -310,7 +412,9 @@ $validationResult = $validator->validate(
 );
 
 if ($validationResult->hasErrors()) {
-    throw new RuntimeException('Document failed vocabulary validation.');
+    throw new RuntimeException(
+        'Document failed vocabulary validation.',
+    );
 }
 
 $sourceContext = new SourceContext(
@@ -330,14 +434,17 @@ $projectionSet = $projectionExtractor->extract(
     assertionSet: $assertionSet,
 );
 
-foreach ($projectionSet->getProjections() as $projection) {
-    var_dump($projection);
-}
+$serialized = $projectionSerializer->serialize(
+    $projectionSet,
+);
+
+var_dump($serialized);
 ```
 
 ### Important
 
 The projection layer assumes:
+
 - parser validation has already succeeded
 - vocabulary validation has already succeeded
 - assertion extraction has already succeeded
@@ -346,13 +453,13 @@ Malformed or semantically invalid assertions should _not_ be passed into the pro
 
 ## Related Packages
 
-| Package                                                    | Responsibility                                     |
-|------------------------------------------------------------|---------------------------------------------------|
-| consolidated-witchcraft/binding-engine-parser              | Parses binding syntax into AST structures         |
-| consolidated-witchcraft/binding-engine-vocabulary          | Defines semantic vocabulary rules                 |
-| consolidated-witchcraft/binding-engine-vocabulary-loader   | Loads vocabularies from JSON definitions          |
-| consolidated-witchcraft/binding-engine-assertions          | Extracts provenance-aware semantic assertions     |
-| consolidated-witchcraft/binding-engine-projection          | Projects assertions into semantic structures      |
+| Package                                                  | Responsibility                                 |
+|----------------------------------------------------------|------------------------------------------------|
+| consolidated-witchcraft/binding-engine-parser            | Parses binding syntax into AST structures      |
+| consolidated-witchcraft/binding-engine-vocabulary        | Defines semantic vocabulary rules              |
+| consolidated-witchcraft/binding-engine-vocabulary-loader | Loads vocabularies from JSON definitions       |
+| consolidated-witchcraft/binding-engine-assertions        | Extracts provenance-aware semantic assertions  |
+| consolidated-witchcraft/binding-engine-projection        | Projects assertions into semantic structures   |
 
 ## Development
 
@@ -378,6 +485,7 @@ Docblocks are therefore considered part of the public contract and must remain a
 ### Design Principles
 
 This package prioritises:
+
 - immutability
 - provenance preservation
 - deterministic behaviour
@@ -386,6 +494,7 @@ This package prioritises:
 - predictable projection semantics
 
 Avoid:
+
 - hidden inference
 - implicit mutation
 - storage-specific assumptions
@@ -394,4 +503,4 @@ Avoid:
 
 ## License
 
-Licensed under the GNU Affero General Public License v3.0 or later (AGPL-3.0-or-later).
+Licensed under the GNU Affero General Public License v3.0 or later (`AGPL-3.0-or-later`).
