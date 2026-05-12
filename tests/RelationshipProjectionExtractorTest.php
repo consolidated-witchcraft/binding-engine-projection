@@ -6,8 +6,8 @@ use ConsolidatedWitchcraft\BindingEngine\Assertions\Assertion;
 use ConsolidatedWitchcraft\BindingEngine\Assertions\AssertionSet;
 use ConsolidatedWitchcraft\BindingEngine\Assertions\SourceContext;
 use ConsolidatedWitchcraft\BindingEngine\Parser\Ast\SourceSpan;
+use ConsolidatedWitchcraft\BindingEngine\Projection\Extraction\RelationshipProjectionExtractor;
 use ConsolidatedWitchcraft\BindingEngine\Projection\RelationshipProjection;
-use ConsolidatedWitchcraft\BindingEngine\Projection\RelationshipProjectionExtractor;
 use ConsolidatedWitchcraft\BindingEngine\Vocabulary\Enums\BindingPayloadShapeEnum;
 
 function makeRelationshipProjectionExtractorSourceContext(): SourceContext

@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace ConsolidatedWitchcraft\BindingEngine\Projection\Interfaces;
+namespace ConsolidatedWitchcraft\BindingEngine\Projection\Extraction\Interfaces;
 
 use ConsolidatedWitchcraft\BindingEngine\Assertions\Interfaces\AssertionSetInterface;
+use ConsolidatedWitchcraft\BindingEngine\Projection\Interfaces\ProjectionSetInterface;
 
 interface ProjectionExtractorInterface
 {

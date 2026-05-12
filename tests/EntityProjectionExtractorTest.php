@@ -7,7 +7,7 @@ use ConsolidatedWitchcraft\BindingEngine\Assertions\AssertionSet;
 use ConsolidatedWitchcraft\BindingEngine\Assertions\SourceContext;
 use ConsolidatedWitchcraft\BindingEngine\Parser\Ast\SourceSpan;
 use ConsolidatedWitchcraft\BindingEngine\Projection\EntityProjection;
-use ConsolidatedWitchcraft\BindingEngine\Projection\EntityProjectionExtractor;
+use ConsolidatedWitchcraft\BindingEngine\Projection\Extraction\EntityProjectionExtractor;
 use ConsolidatedWitchcraft\BindingEngine\Vocabulary\Enums\BindingPayloadShapeEnum;
 
 function makeEntityProjectionExtractorSourceContext(): SourceContext

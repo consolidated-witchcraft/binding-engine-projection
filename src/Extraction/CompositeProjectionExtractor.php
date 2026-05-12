@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace ConsolidatedWitchcraft\BindingEngine\Projection;
+namespace ConsolidatedWitchcraft\BindingEngine\Projection\Extraction;
 
 use ConsolidatedWitchcraft\BindingEngine\Assertions\Interfaces\AssertionSetInterface;
-use ConsolidatedWitchcraft\BindingEngine\Projection\Interfaces\ProjectionExtractorInterface;
+use ConsolidatedWitchcraft\BindingEngine\Projection\Extraction\Interfaces\ProjectionExtractorInterface;
 use ConsolidatedWitchcraft\BindingEngine\Projection\Interfaces\ProjectionSetInterface;
+use ConsolidatedWitchcraft\BindingEngine\Projection\ProjectionSet;
 
 final readonly class CompositeProjectionExtractor implements ProjectionExtractorInterface
 {

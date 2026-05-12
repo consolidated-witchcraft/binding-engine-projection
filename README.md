@@ -272,14 +272,7 @@ The role of this package is to faithfully project semantic structures — not to
 
 declare(strict_types=1);
 
-use ConsolidatedWitchcraft\BindingEngine\Assertions\AstAssertionExtractor;
-use ConsolidatedWitchcraft\BindingEngine\Assertions\SourceContext;
-use ConsolidatedWitchcraft\BindingEngine\Parser\Parser;
-use ConsolidatedWitchcraft\BindingEngine\Projection\CompositeProjectionExtractor;
-use ConsolidatedWitchcraft\BindingEngine\Projection\EntityProjectionExtractor;
-use ConsolidatedWitchcraft\BindingEngine\Projection\RelationshipProjectionExtractor;
-use ConsolidatedWitchcraft\BindingEngine\Vocabulary\Validator;
-use ConsolidatedWitchcraft\BindingEngine\VocabularyLoader\JsonVocabularyLoader;
+use ConsolidatedWitchcraft\BindingEngine\Assertions\AstAssertionExtractor;use ConsolidatedWitchcraft\BindingEngine\Assertions\SourceContext;use ConsolidatedWitchcraft\BindingEngine\Parser\Parser;use ConsolidatedWitchcraft\BindingEngine\Projection\Extraction\CompositeProjectionExtractor;use ConsolidatedWitchcraft\BindingEngine\Projection\Extraction\EntityProjectionExtractor;use ConsolidatedWitchcraft\BindingEngine\Projection\Extraction\RelationshipProjectionExtractor;use ConsolidatedWitchcraft\BindingEngine\Vocabulary\Validator;use ConsolidatedWitchcraft\BindingEngine\VocabularyLoader\JsonVocabularyLoader;
 
 $parser = new Parser();
 $vocabularyLoader = new JsonVocabularyLoader();
