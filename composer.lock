@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "consolidated-witchcraft/binding-engine-assertions",
-            "version": "v0.1.0",
+            "version": "v0.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/consolidated-witchcraft/binding-engine-assertions.git",
-                "reference": "dc7b46080f3d193efe155923a931a814aab49bcb"
+                "reference": "7838313c04a41b9ed698d05708e602fccd7663f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/consolidated-witchcraft/binding-engine-assertions/zipball/dc7b46080f3d193efe155923a931a814aab49bcb",
-                "reference": "dc7b46080f3d193efe155923a931a814aab49bcb",
+                "url": "https://api.github.com/repos/consolidated-witchcraft/binding-engine-assertions/zipball/7838313c04a41b9ed698d05708e602fccd7663f7",
+                "reference": "7838313c04a41b9ed698d05708e602fccd7663f7",
                 "shasum": ""
             },
             "require": {
@@ -72,7 +72,7 @@
                 }
             ],
             "description": "Extracts structured semantic assertions from validated binding documents.",
-            "time": "2026-05-11T13:47:34+00:00"
+            "time": "2026-05-12T14:49:08+00:00"
         },
         {
             "name": "consolidated-witchcraft/binding-engine-parser",
