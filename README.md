@@ -73,8 +73,8 @@ May produce:
 ```text
 RelationshipProjection
 ├── relationshipType: parent_of
-├── from: george-austen
-├── to: jane-austen
+├── subject: george-austen
+├── object: jane-austen
 ├── originatingAssertion: (...)
 └── provenance: (...)
 ```
@@ -133,6 +133,72 @@ Projection output may be consumed by:
 - inference engines
 - custom application layers
 
+## Current Projection Rules
+
+### Entity Projection
+
+Assertions using shorthand payloads project to `EntityProjection`.
+
+Example:
+
+```text
+@person[jane-austen](Jane Austen)
+```
+
+Projects to:
+
+```text
+EntityProjection
+├── entityType: person
+├── identifier: jane-austen
+└── label: Jane Austen
+```
+
+### Relationship Projection
+
+Assertions with:
+- binding type `relationship`
+- attribute-list payloads
+- `type`, `subject` and `object` attributes
+
+project to `RelationshipProjection`.
+
+Example:
+
+```text
+@relationship[
+    type: parent_of,
+    subject: george-austen,
+    object: jane-austen
+](George Austen was Jane Austen’s father)
+```
+
+Projects to:
+
+```text
+RelationshipProjection
+├── relationshipType: parent_of
+├── subject: george-austen
+├── object: jane-austen
+└── label: George Austen was Jane Austen’s father
+```
+
+### Projection Constraints
+
+Projection currently:
+- preserves originating assertion provenance
+- preserves extractor ordering
+- ignores assertions that are not projection-ready
+
+Projection does not:
+- infer missing structures
+- canonicalise entities
+- merge duplicate projections
+- resolve semantic conflicts
+- construct complete graph topologies
+
+Those concerns belong to downstream systems.
+
 ## Example Workflow
 
 ```text
@@ -160,6 +226,10 @@ Inference / Graph Construction / Indexing
 ### Projection Extractor
 
 Transforms assertion sets into projection sets.
+
+### Composite Projection Extractor
+
+Coordinates multiple specialised projection extractors into a single deterministic projection pipeline.
 
 ### Projection Set
 
@@ -205,16 +275,30 @@ declare(strict_types=1);
 use ConsolidatedWitchcraft\BindingEngine\Assertions\AstAssertionExtractor;
 use ConsolidatedWitchcraft\BindingEngine\Assertions\SourceContext;
 use ConsolidatedWitchcraft\BindingEngine\Parser\Parser;
-use ConsolidatedWitchcraft\BindingEngine\Projection\AstProjectionExtractor;
+use ConsolidatedWitchcraft\BindingEngine\Projection\CompositeProjectionExtractor;
+use ConsolidatedWitchcraft\BindingEngine\Projection\EntityProjectionExtractor;
+use ConsolidatedWitchcraft\BindingEngine\Projection\RelationshipProjectionExtractor;
 use ConsolidatedWitchcraft\BindingEngine\Vocabulary\Validator;
 use ConsolidatedWitchcraft\BindingEngine\VocabularyLoader\JsonVocabularyLoader;
 
 $parser = new Parser();
 $vocabularyLoader = new JsonVocabularyLoader();
 $assertionExtractor = new AstAssertionExtractor();
-$projectionExtractor = new AstProjectionExtractor();
 
-$source = '@person[jane-austen](Jane Austen)';
+$projectionExtractor = new CompositeProjectionExtractor([
+    new EntityProjectionExtractor(),
+    new RelationshipProjectionExtractor(),
+]);
+
+$source = <<<MARKDOWN
+@person[jane-austen](Jane Austen)
+
+@relationship[
+    type: parent_of,
+    subject: george-austen,
+    object: jane-austen
+](George Austen was Jane Austen’s father)
+MARKDOWN;
 
 $vocabulary = $vocabularyLoader->load(
     file_get_contents(__DIR__ . '/vocabulary.json'),
@@ -223,7 +307,7 @@ $vocabulary = $vocabularyLoader->load(
 $parseResult = $parser->parse($source);
 
 if ($parseResult->hasErrors()) {
-    throw new ParseException('Document contains parser errors.');
+    throw new RuntimeException('Document contains parser errors.');
 }
 
 $validator = new Validator($vocabulary);
@@ -233,7 +317,7 @@ $validationResult = $validator->validate(
 );
 
 if ($validationResult->hasErrors()) {
-    throw new ValidationError('Document failed vocabulary validation.');
+    throw new RuntimeException('Document failed vocabulary validation.');
 }
 
 $sourceContext = new SourceContext(
