@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use ConsolidatedWitchcraft\BindingEngine\Projection\EntityProjection;
-
 use ConsolidatedWitchcraft\BindingEngine\Projection\ProjectionSet;
 use ConsolidatedWitchcraft\BindingEngine\Projection\RelationshipProjection;
 use ConsolidatedWitchcraft\BindingEngine\Projection\Serialization\Interfaces\ProjectionSetSerializerInterface;
