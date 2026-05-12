@@ -142,3 +142,17 @@ it('preserves originating assertion provenance', function () {
         ->and($sourceContext->getVocabularyIdentifier())->toBe('test-vocabulary')
         ->and($sourceContext->getVocabularyVersion())->toBe('0.1.0');
 });
+
+it('exposes a deterministic projection key', function () {
+    $originatingAssertion = makeEntityProjectionAssertion();
+
+    $projection = new EntityProjection(
+        entityType: 'person',
+        identifier: 'jane-austen',
+        label: 'Jane Austen',
+        originatingAssertion: $originatingAssertion,
+    );
+
+    expect($projection->getProjectionKey()->getValue())
+        ->toBe('entity:person:jane-austen');
+});

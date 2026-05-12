@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace ConsolidatedWitchcraft\BindingEngine\Projection;
 
-use ConsolidatedWitchcraft\BindingEngine\Assertions\Assertion;
 use ConsolidatedWitchcraft\BindingEngine\Assertions\Interfaces\AssertionInterface;
 use ConsolidatedWitchcraft\BindingEngine\Projection\Exceptions\InvalidProjectionException;
 use ConsolidatedWitchcraft\BindingEngine\Projection\Interfaces\ProjectionInterface;
@@ -72,5 +71,16 @@ readonly class EntityProjection implements ProjectionInterface
                 'Entity projection label must not be empty when provided.',
             );
         }
+    }
+
+    public function getProjectionKey(): ProjectionKey
+    {
+        return new ProjectionKey(
+            sprintf(
+                'entity:%s:%s',
+                $this->entityType,
+                $this->identifier,
+            ),
+        );
     }
 }

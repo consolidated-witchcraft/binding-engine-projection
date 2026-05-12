@@ -84,4 +84,16 @@ readonly class RelationshipProjection implements ProjectionInterface
             );
         }
     }
+
+    public function getProjectionKey(): ProjectionKey
+    {
+        return new ProjectionKey(
+            sprintf(
+                'relationship:%s:%s:%s',
+                $this->relationshipType,
+                $this->subject,
+                $this->object,
+            ),
+        );
+    }
 }

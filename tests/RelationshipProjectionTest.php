@@ -174,3 +174,18 @@ it('preserves originating assertion provenance', function () {
         ->and($sourceContext->getVocabularyIdentifier())->toBe('test-vocabulary')
         ->and($sourceContext->getVocabularyVersion())->toBe('0.1.0');
 });
+
+it('exposes a deterministic projection key', function () {
+    $originatingAssertion = makeRelationshipProjectionAssertion();
+
+    $projection = new RelationshipProjection(
+        relationshipType: 'parent-of',
+        subject: 'george-austen',
+        object: 'jane-austen',
+        label: 'father of',
+        originatingAssertion: $originatingAssertion,
+    );
+
+    expect($projection->getProjectionKey()->getValue())
+        ->toBe('relationship:parent-of:george-austen:jane-austen');
+});
